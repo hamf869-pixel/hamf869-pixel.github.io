@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex"><title>لوحة التحكم</title><link rel="stylesheet" href="style.css"><script src="config.js"></script></head><body>
+<div class="adm-wrap">
+<header style="position:static;display:flex;align-items:center;gap:10px;margin-bottom:18px;border:0;background:none"><h2 style="margin:0;flex:1">لوحة التحكم</h2><a class="btn btn-ghost" href="index.html">الموقع</a><button class="btn btn-ghost" id="out" hidden>خروج</button></header>
+<form class="panel" id="lf"><h3 id="lt" style="margin-top:0">ربط لوحة التحكم بمستودع GitHub</h3>
+<p style="color:var(--muted);margin-top:0">الموقع ثابت على GitHub Pages، فتُحفظ التعديلات مباشرة داخل المستودع. أنشئ <b>Fine-grained token</b> من GitHub ‏(Settings ← Developer settings) بصلاحية <b>Contents: Read and write</b> على هذا المستودع فقط.</p>
+<div class="fg"><label>المستودع (المالك/الاسم)<input id="repo" placeholder="username/my-site" dir="ltr" required></label><label>الفرع<input id="branch" value="main" dir="ltr" required></label>
+<label class="full">التوكن (Token)<input id="pw" type="password" placeholder="github_pat_..." dir="ltr" autocomplete="off" required></label>
+<label class="full"><span><input type="checkbox" id="rem"> تذكّر التوكن في هذا المتصفح (لا تفعل ذلك على جهاز مشترك)</span></label></div>
+<button class="btn btn-primary" style="margin-top:12px">دخول</button><p id="lm" style="color:#c0392b"></p></form>
+<div id="app" hidden>
+<div class="panel" id="st"><div id="gcs"></div><p style="margin:0;color:var(--muted)">بعد كل حفظ يحتاج GitHub Pages من دقيقة إلى دقيقتين ليظهر التعديل في الموقع.</p></div>
+<div class="panel"><div class="row" style="border:0"><h3 style="margin:0;flex:1">البرامج</h3><button class="btn btn-primary" id="new" type="button">إضافة برنامج</button></div><div id="ls"></div></div>
+<form class="panel" id="f" hidden><h3 id="ft" style="margin-top:0"></h3><div class="fg">
+<label>اسم البرنامج<input id="name" required></label><label>التصنيف<input id="category" placeholder="إدارية"></label>
+<label class="full">وصف قصير<input id="tagline"></label>
+<label class="full">الوصف الكامل<textarea id="desc" rows="3"></textarea></label>
+<label class="full">المزايا (ميزة في كل سطر)<textarea id="features" rows="4"></textarea></label>
+<label>الإصدار<input id="version" placeholder="1.0.0"></label><label>المنصة<input id="platform" placeholder="Windows"></label>
+<label>اللغة<input id="lang" placeholder="العربية"></label><label>شارة على البطاقة<input id="badge" placeholder="جديد"></label>
+<label class="full">رابط التحميل (Google Drive أو غيره)<input id="download" type="url" placeholder="https://"></label>
+<label class="full">الفيديو: رابط يوتيوب أو ملف مرفوع<input id="video" placeholder="https://youtu.be/..."></label>
+<div class="full"><input type="file" id="fv" accept="video/mp4,video/webm" hidden><button class="btn btn-ghost" type="button" id="bv">رفع فيديو من جهازك</button></div>
+<label><span><input type="checkbox" id="activation"> يحتاج مفتاح تفعيل</span></label><label><span><input type="checkbox" id="soon"> قريباً (التحميل متوقف)</span></label>
+<div class="full"><b>الصور</b><div class="shots" id="shots"></div><input type="file" id="fi" accept="image/*" multiple hidden><button class="btn btn-ghost" type="button" id="bi" style="margin-top:8px">إضافة صور</button></div>
+</div><p id="fm" style="color:#c0392b"></p><div style="display:flex;gap:10px"><button class="btn btn-primary">حفظ</button><button class="btn btn-ghost" type="button" id="cx">إلغاء</button></div></form>
+</div></div>
+<script>
+const $=s=>document.querySelector(s),F=["name","category","tagline","desc","version","platform","lang","badge","download","video"],DATA="data/programs.json";
+let P=[],DL={},S=[],cid="",sha="",G={repo:"",branch:"main",token:""},PV={}; // PV: معاينات محلية للصور المرفوعة حديثاً
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// ===== أدوات GitHub API =====
+const b64=s=>{const u=new TextEncoder().encode(s);let t="";u.forEach(c=>t+=String.fromCharCode(c));return btoa(t);}; // نص UTF-8 إلى base64
+const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,"")),c=>c.charCodeAt(0)));
+async function gh(path,o={}){const q=o.method&&o.method!=="GET"?"":"?ref="+encodeURIComponent(G.branch)+"&t="+Date.now();
+ const r=await fetch("https://api.github.com/repos/"+G.repo+"/contents/"+path+q,{...o,headers:{Authorization:"Bearer "+G.token,Accept:"application/vnd.github+json",...(o.body?{"Content-Type":"application/json"}:{})}});
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok){const e=new Error(j.message||("خطأ "+r.status));e.status=r.status;throw e;}return j;}
+const errMsg=e=>e.status===401?"التوكن غير صالح أو منتهي":e.status===403?"لا صلاحية: تأكد من صلاحية Contents ‏(Read and write)":e.status===404?"المستودع أو الفرع غير موجود (أو التوكن لا يصل إليه)":e.status===409||e.status===422?"تعارض في الحفظ، أعد المحاولة":(e.message||e);
+async function load(){try{const j=await gh(DATA);sha=j.sha;const d=JSON.parse(unb64(j.content)||"{}");P=d.programs||[];}catch(e){if(e.status===404&&/Not Found/i.test(e.message)){sha="";P=[];}else throw e;}}
+async function commit(msg){ // يحفظ قائمة البرامج في data/programs.json
+ const body={message:msg,content:b64(JSON.stringify({programs:P},null,1)),branch:G.branch};if(sha)body.sha=sha;
+ try{const j=await gh(DATA,{method:"PUT",body:JSON.stringify(body)});sha=j.content.sha;}
+ catch(e){if(e.status===409||e.status===422){await load();}throw e;}}
+function fileB64(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=no;fr.readAsDataURL(f);});}
+async function up(f){
+ const ext=(f.name.split(".").pop()||"").toLowerCase(),ok=["jpg","jpeg","png","webp","gif","mp4","webm"];
+ if(!ok.includes(ext))throw "نوع غير مدعوم: صور أو mp4/webm فقط";
+ if(f.size>25*1024*1024)throw "الملف أكبر من 25 ميغابايت. للفيديو الكبير ضع رابط يوتيوب";
+ const n=Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>x.toString(16).padStart(2,"0")).join("")+"."+ext,path="uploads/"+n,c=await fileB64(f);
+ try{await gh(path,{method:"PUT",body:JSON.stringify({message:"رفع ملف "+n,content:c,branch:G.branch})});}catch(e){throw errMsg(e);}
+ PV[path]="data:"+(f.type||"application/octet-stream")+";base64,"+c;return path;}
+async function delf(path){ // حذف ملف مرفوع من المستودع (بصمت عند الفشل)
+ if(!/^uploads\/[A-Za-z0-9_.-]+$/.test(path||""))return;
+ try{const j=await gh(path);await gh(path,{method:"DELETE",body:JSON.stringify({message:"حذف ملف",sha:j.sha,branch:G.branch})});}catch(e){}}
+// تنظيف البيانات (يقابل clean في api.php القديم)
+function clean(p){
+ const s=(k,n=300)=>String(p[k]??"").trim().slice(0,n),path=v=>/^(uploads\/[A-Za-z0-9_.-]+|https?:\/\/\S+)$/.test(v)?v:"";
+ const shots=(p.shots||[]).map(x=>[path(String(x[0]||"")),String(x[1]||"").slice(0,100)]).filter(x=>x[0]);
+ const features=(p.features||[]).map(x=>String(x).trim().slice(0,200)).filter(Boolean),dl=s("download",1000);
+ const id=/^[a-z0-9]{4,20}$/.test(p.id||"")?p.id:Array.from(crypto.getRandomValues(new Uint8Array(4)),x=>x.toString(16).padStart(2,"0")).join("");
+ return {id,name:s("name",80)||"برنامج بدون اسم",category:s("category",40)||"عام",badge:s("badge",20),tagline:s("tagline"),desc:s("desc",2000),features,version:s("version",20),platform:s("platform",40),lang:s("lang",40),
+  activation:!!p.activation,soon:!!p.soon,video:path(s("video",500)),download:/^https?:\/\/\S+$/.test(dl)?dl:"",shots};}
+// ===== الدخول =====
+(()=>{try{$("#repo").value=window.GH_REPO||"";const h=location.hostname;if(h.endsWith(".github.io")){const o=h.split(".")[0],rp=location.pathname.split("/")[1];$("#repo").value=o+"/"+(rp&&!rp.includes(".")?rp:o+".github.io");}
+ const sv=JSON.parse(localStorage.getItem("gh_admin")||"null");if(sv){$("#repo").value=sv.repo;$("#branch").value=sv.branch;$("#pw").value=sv.token;$("#rem").checked=true;}}catch(e){}})();
+$("#lf").onsubmit=async e=>{e.preventDefault();G={repo:$("#repo").value.trim(),branch:$("#branch").value.trim()||"main",token:$("#pw").value.trim()};$("#lm").textContent="جارٍ التحقق...";
+ try{await load();try{if($("#rem").checked)localStorage.setItem("gh_admin",JSON.stringify(G));else localStorage.removeItem("gh_admin");}catch(x){}
+  $("#lf").hidden=true;$("#lm").textContent="";show();}catch(x){$("#lm").textContent=errMsg(x);}};
+$("#out").onclick=()=>{try{localStorage.removeItem("gh_admin");}catch(e){}location.reload();};
+function show(){$("#app").hidden=false;$("#out").hidden=false;list();stats();}
+async function stats(){ // عدّادات الزيارات والتحميلات من GoatCounter
+ if(!GC_CODE){$("#gcs").innerHTML=`<p style="color:var(--muted)">العدّادات غير مفعّلة: ضع رمز حساب GoatCounter في ملف config.js (انظر README).</p>`;return;}
+ const [v,...d]=await Promise.all([gcGet("TOTAL"),...P.map(p=>gcGet("/download/"+p.id))]);DL=Object.fromEntries(P.map((p,i)=>[p.id,d[i]||0]));
+ $("#gcs").innerHTML=`<div class="kp"><div><small>إجمالي الزيارات</small><b>${v??"—"}</b></div><div><small>إجمالي التحميلات</small><b>${d.reduce((x,y)=>x+(y||0),0)}</b></div></div><p><a href="https://${GC_CODE}.goatcounter.com" target="_blank" rel="noopener">لوحة إحصائيات GoatCounter التفصيلية</a></p>`;list();}
+function list(){$("#ls").innerHTML=P.length?"":`<p style="color:var(--muted)">لا توجد برامج بعد. اضغط «إضافة برنامج».</p>`;
+P.forEach(p=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<b>${esc(p.name)}</b>${GC_CODE?`<span>${DL[p.id]||0} تحميل</span>`:""}<button class="btn btn-ghost" type="button">تعديل</button><button class="btn btn-ghost danger" type="button">حذف</button>`;
+const bs=r.querySelectorAll("button");bs[0].onclick=()=>edit(p);bs[1].onclick=async()=>{if(!confirm("حذف «"+p.name+"» مع صوره وفيديوهاته؟"))return;
+ try{P=P.filter(x=>x.id!==p.id);await commit("حذف برنامج: "+p.name);await delf(p.video);for(const s of p.shots||[])await delf(s[0]);}catch(x){await load().catch(()=>{});alert(errMsg(x));}list();};$("#ls").appendChild(r);});}
+function edit(p){p=p||{};cid=p.id||"";$("#ft").textContent=cid?"تعديل البرنامج":"برنامج جديد";F.forEach(k=>$("#"+k).value=p[k]||"");
+$("#features").value=(p.features||[]).join("\n");$("#activation").checked=!!p.activation;$("#soon").checked=!!p.soon;S=(p.shots||[]).map(x=>[...x]);shots();$("#fm").textContent="";$("#f").hidden=false;$("#f").scrollIntoView({behavior:"smooth"});}
+function shots(){$("#shots").innerHTML="";S.forEach((s,i)=>{const f=document.createElement("figure");f.innerHTML=`<img src="${esc(PV[s[0]]||s[0])}" alt=""><input placeholder="وصف الصورة" value="${esc(s[1])}"><button class="btn btn-ghost danger" type="button" style="padding:4px;width:100%">حذف</button>`;
+f.children[1].oninput=e=>S[i][1]=e.target.value;f.children[2].onclick=()=>{S.splice(i,1);shots();};$("#shots").appendChild(f);});}
+$("#new").onclick=()=>edit();$("#cx").onclick=()=>$("#f").hidden=true;
+$("#bi").onclick=()=>$("#fi").click();$("#bv").onclick=()=>$("#fv").click();
+$("#fi").onchange=async e=>{$("#fm").textContent="جارٍ رفع الصور...";try{for(const f of e.target.files)S.push([await up(f),""]);$("#fm").textContent="";shots();}catch(x){$("#fm").textContent=x;}e.target.value="";};
+$("#fv").onchange=async e=>{$("#fm").textContent="جارٍ رفع الفيديو...";try{$("#video").value=await up(e.target.files[0]);$("#fm").textContent="";}catch(x){$("#fm").textContent=x;}e.target.value="";};
+$("#f").onsubmit=async e=>{e.preventDefault();const raw={id:cid,shots:S,features:$("#features").value.split("\n"),activation:$("#activation").checked,soon:$("#soon").checked};F.forEach(k=>raw[k]=$("#"+k).value);
+ const p=clean(raw);$("#fm").textContent="جارٍ الحفظ...";
+ try{const i=P.findIndex(x=>x.id===p.id);if(i>=0)P[i]=p;else P.unshift(p);await commit("حفظ برنامج: "+p.name);$("#f").hidden=true;list();}catch(x){$("#fm").textContent=errMsg(x);}};
+</script></body></html>

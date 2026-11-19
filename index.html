@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>عالم البرمجيات</title>
+<meta name="description" content="عالم البرمجيات: برامج جاهزة للتحميل والاستعمال من BOU.HAM.TECH.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Reem+Kufi:wght@600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
+<script>if(GC_CODE){var g=document.createElement("script");g.async=true;g.dataset.goatcounter="https://"+GC_CODE+".goatcounter.com/count";g.src="https://gc.zgo.at/count.js";document.head.appendChild(g);}</script>
+</head>
+<body>
+<header><div class="wrap bar">
+ <a class="brand" href="#top" data-go="top"><img src="logo.png" alt=""><span>عالم البرمجيات</span></a>
+ <nav id="nav" aria-label="التنقل الرئيسي"><a href="#programs" data-go="programs">البرامج</a><a href="#how" data-go="how">طريقة الحصول عليها</a><a href="#contact" data-go="contact">تواصل معنا</a></nav>
+ <button class="icon-btn" id="theme" aria-label="تبديل الوضع الليلي">◐</button>
+ <button class="icon-btn menu-btn" id="menu" aria-label="القائمة" aria-expanded="false">☰</button>
+</div></header>
+
+<main id="top">
+<div class="hero"><div class="wrap">
+ <div>
+  <h1>عالم البرمجيات</h1>
+  <p class="lead">مجموعة برامج جاهزة للاستعمال. اختر برنامجك وحمّله بضغطة واحدة.</p>
+  <div class="cta"><a class="btn btn-primary" href="#programs" data-go="programs">تصفّح البرامج</a><a class="btn btn-ghost" href="#contact" data-go="contact">تواصل معنا</a></div>
+  <div class="facts"><div><b id="count">0</b>برنامج متاح للتحميل</div><div id="fv" hidden><b id="visits">0</b>زائر</div><div id="fd" hidden><b id="dls">0</b>تحميل</div></div>
+ </div>
+ <div class="stage" aria-hidden="true"><div class="orbit"></div><div class="win"><i></i><img src="logo.png" alt="" style="width:46%;margin:12% auto"></div></div>
+</div></div>
+
+<section id="programs"><div class="wrap">
+ <h2>البرامج</h2><p class="sub">كل برنامج له بطاقة فيها وصفه وصوره ورابط تحميله.</p>
+ <div class="tools"><input class="search" id="q" type="search" placeholder="ابحث عن برنامج" aria-label="ابحث عن برنامج"><div class="chips" id="chips"></div></div>
+ <div class="grid" id="grid"></div>
+</div></section>
+
+<section id="how"><div class="wrap">
+ <h2>كيف تحصل على البرنامج</h2><p class="sub">ثلاث خطوات فقط.</p>
+ <ol class="steps">
+  <li><b>اختر البرنامج</b><span>افتح تفاصيله لتطّلع على صوره ومزاياه.</span></li>
+  <li><b>حمّله</b><span>اضغط «تحميل» وانتظر انتهاء التنزيل.</span></li>
+  <li><b>ثبّته وابدأ</b><span>ثبّت البرنامج على جهازك، وإن احتجت مساعدة تواصل معنا.</span></li>
+ </ol>
+</div></section>
+
+<section id="contact"><div class="wrap">
+ <h2>تواصل معنا</h2><p class="sub">لأي استفسار أو مساعدة.</p>
+ <div class="contact">
+  <a class="ct" href="https://wa.me/213774835910" target="_blank" rel="noopener"><small>واتساب</small><b>0774 835 910</b></a>
+  <a class="ct" href="tel:+213774835910"><small>الهاتف</small><b>0774 835 910</b></a>
+  <a class="ct" href="mailto:hamf869@gmail.com"><small>البريد الإلكتروني</small><b>hamf869@gmail.com</b></a>
+ </div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><span>© <span id="yr">2026</span> BOU.HAM.TECH — جميع الحقوق محفوظة</span><span>عالم البرمجيات: برامج جاهزة للتحميل · <a href="admin.html" rel="nofollow">لوحة التحكم</a></span></div></footer>
+
+<dialog id="dlg" aria-labelledby="dt"><button class="icon-btn x" id="dx" aria-label="إغلاق">✕</button><div class="dg"><div class="gal"><img class="main" id="dm" alt=""><div id="vbox" hidden></div><div class="thumbs" id="dth"></div><button class="btn btn-ghost" type="button" id="vb" hidden>▶ شاهد الفيديو</button></div><div class="info"><span class="cat" id="dc"></span><h3 id="dt"></h3><p id="dd" style="margin:0;color:var(--muted)"></p><ul id="df"></ul><details id="dch" hidden><summary>سجل التحديثات</summary><div id="dcl"></div></details><div class="meta" id="dmeta"></div><div class="acts"><a class="btn btn-primary" id="dl" target="_blank" rel="noopener">تحميل</a><a class="btn btn-ghost" id="dk" target="_blank" rel="noopener">اطلب مفتاح التفعيل</a></div><button class="btn btn-ghost" type="button" id="cp">نسخ رابط البرنامج</button></div></div></dialog>
+
+
+
+<script>
+const $=s=>document.querySelector(s),grid=$("#grid"),chips=$("#chips"),q=$("#q"),dlg=$("#dlg"),DATA="data/programs.json",WA="https://wa.me/213774835910?text=";
+let PROGRAMS=[],DL={},cat="الكل",cur="",curP=null;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dlUrl=p=>p.download,n=p=>DL[p.id]||0; // رابط التحميل المباشر؛ العدّاد من GoatCounter
+const metaOf=p=>[p.version&&"الإصدار "+p.version,p.platform,p.lang,!p.soon&&GC_CODE&&"⬇ "+n(p)+" تحميل"].filter(Boolean).map(m=>`<span>${esc(m)}</span>`).join("");
+function card(p){const c=document.createElement("article");c.className="card";
+ c.innerHTML=`<div class="cover">${p.shots[0]?`<img class="shot" src="${esc(p.shots[0][0])}" alt="">`:`<span class="ph">⚙</span>`}${p.badge?`<span class="badge">${esc(p.badge)}</span>`:""}</div><div class="body"><span class="cat">${esc(p.category)}</span><h3>${esc(p.name)}</h3><p>${esc(p.tagline)}</p><div class="meta">${metaOf(p)}</div><div class="acts"></div></div>`;
+ const a=c.querySelector(".acts");
+ if(p.soon||!p.download)a.innerHTML=`<span class="btn btn-ghost" aria-disabled="true">غير متاح بعد</span>`;
+ else{a.innerHTML=`<a class="btn btn-primary" target="_blank" rel="noopener">تحميل</a><button class="btn btn-ghost" type="button">التفاصيل</button>`;a.firstChild.href=dlUrl(p);a.firstChild.addEventListener("click",()=>{gcDownload(p.id,p.name);DL[p.id]=n(p)+1;stat();});a.lastChild.onclick=()=>openP(p);}
+ return c;}
+function render(){const t=q.value.trim().toLowerCase();grid.innerHTML="";
+ const list=PROGRAMS.filter(p=>(cat==="الكل"||p.category===cat)&&(!t||(p.name+p.tagline+p.desc).toLowerCase().includes(t)));
+ list.forEach(p=>grid.appendChild(card(p)));
+ if(!list.length)grid.innerHTML=`<div class="empty">${PROGRAMS.length?"لا توجد برامج مطابقة. جرّب كلمة أخرى أو اختر «الكل».":"لا توجد برامج بعد. سيتم إضافتها قريباً."}</div>`;}
+function chipsRender(){chips.innerHTML="";if(PROGRAMS.length<2)return;["الكل",...new Set(PROGRAMS.map(p=>p.category))].forEach(c=>{const b=document.createElement("button");b.className="chip";b.type="button";b.textContent=c;b.setAttribute("aria-pressed",c===cat);b.onclick=()=>{cat=c;chipsRender();render();};chips.appendChild(b);});}
+function vsrc(v){let m=v.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/))([\w-]{6,})/);return m?"https://www.youtube.com/embed/"+m[1]:v;}
+function vstop(){const b=$("#vbox");b.innerHTML="";b.hidden=true;$("#dm").hidden=false;}
+function openP(p){cur=p.id;curP=p;vstop();$("#dc").textContent=p.category;$("#dt").textContent=p.name;$("#dd").textContent=p.desc;
+ $("#df").innerHTML=p.features.map(f=>`<li>${esc(f)}</li>`).join("");$("#dmeta").innerHTML=metaOf(p);
+ $("#dl").href=dlUrl(p);$("#vb").hidden=!p.video;$("#dch").hidden=true;$("#dk").hidden=!p.activation;$("#dk").href=WA+encodeURIComponent("مرحباً، أريد مفتاح تفعيل برنامج "+p.name);
+ const m=$("#dm"),th=$("#dth");th.innerHTML="";m.hidden=!p.shots.length;
+ const show=i=>{vstop();m.src=p.shots[i][0];m.alt=p.shots[i][1];[...th.children].forEach((b,j)=>b.setAttribute("aria-current",j===i));};
+ p.shots.forEach((s,i)=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-label",s[1]||"صورة");b.innerHTML=`<img src="${esc(s[0])}" alt="">`;b.onclick=()=>show(i);th.appendChild(b);});
+ if(p.shots.length)show(0);dlg.showModal();}
+$("#vb").onclick=()=>{const v=curP.video,b=$("#vbox");$("#dm").hidden=true;b.hidden=false;b.innerHTML=/^https?:\/\/(?!.*\.(mp4|webm)(\?|$))/i.test(v)?`<iframe src="${esc(vsrc(v))}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`:`<video controls autoplay playsinline src="${esc(v)}"></video>`;};
+$("#dx").onclick=()=>dlg.close();dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close();});dlg.addEventListener("close",vstop);q.addEventListener("input",render);
+$("#dl").addEventListener("click",()=>{if(curP){gcDownload(cur,curP.name);DL[cur]=n(curP)+1;stat();$("#dmeta").innerHTML=metaOf(curP);}});
+$("#cp").onclick=async()=>{const u=location.href.split("#")[0].split("?")[0]+"?p="+cur;try{await navigator.clipboard.writeText(u);$("#cp").textContent="تم نسخ الرابط";setTimeout(()=>$("#cp").textContent="نسخ رابط البرنامج",1800);}catch(e){prompt("انسخ الرابط",u);}};
+function stat(){$("#dls").textContent=Object.values(DL).reduce((a,b)=>a+b,0);}
+async function counters(){if(!GC_CODE)return;
+ const [v,...d]=await Promise.all([gcGet("TOTAL"),...PROGRAMS.filter(p=>!p.soon).map(p=>gcGet("/download/"+p.id))]);
+ PROGRAMS.filter(p=>!p.soon).forEach((p,i)=>DL[p.id]=d[i]||0);
+ if(v!==null){$("#visits").textContent=v;$("#fv").hidden=false;}stat();$("#fd").hidden=false;render();}
+$("#yr").textContent=new Date().getFullYear();
+document.querySelectorAll("[data-go]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const el=document.getElementById(a.dataset.go);if(el)el.scrollIntoView({behavior:"smooth"});$("#nav").classList.remove("open");$("#menu").setAttribute("aria-expanded","false");}));
+$("#menu").onclick=()=>{const o=$("#nav").classList.toggle("open");$("#menu").setAttribute("aria-expanded",o);};
+const root=document.documentElement;try{const s=localStorage.getItem("theme");if(s)root.setAttribute("data-theme",s);}catch(e){}
+$("#theme").onclick=()=>{const dark=root.getAttribute("data-theme")?root.getAttribute("data-theme")==="dark":matchMedia("(prefers-color-scheme:dark)").matches;const t=dark?"light":"dark";root.setAttribute("data-theme",t);try{localStorage.setItem("theme",t);}catch(e){}};
+(async()=>{
+ try{const r=await fetch(DATA+"?t="+Date.now()),j=await r.json();PROGRAMS=j.programs||[];
+  $("#count").textContent=PROGRAMS.filter(p=>!p.soon).length;
+  chipsRender();render();const t=new URLSearchParams(location.search).get("p"),pr=PROGRAMS.find(x=>x.id===t&&!x.soon);if(pr)openP(pr);counters();
+ }catch(e){grid.innerHTML=`<div class="empty">تعذّر تحميل البرامج. حاول إعادة تحميل الصفحة.</div>`;}})();
+</script>
+</body>
+</html>
